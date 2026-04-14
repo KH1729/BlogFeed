@@ -26,6 +26,4 @@ This runs the API on port **3001** and the Vite app on **5173** with `/api` prox
 | `npm test -w blog-feed-server` | Server integration tests |
 | `npm test -w blog-feed-client` | Client unit tests |
 
-## SDD
 
-Feature pipelines live under [`.sdd/`](.sdd). Project summary: [`.sdd/summaries/blog-feed/project-summary.md`](.sdd/summaries/blog-feed/project-summary.md).

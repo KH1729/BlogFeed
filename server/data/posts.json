@@ -1,5 +1,10 @@
 {
   "posts": [
-
+    {
+      "id": "f7255809-51af-4670-90ee-03692e927505",
+      "title": "Hagay first post",
+      "body": "this is my first post",
+      "createdAt": "2026-04-14T17:54:29.619Z"
+    }
   ]
 }
