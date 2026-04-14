@@ -1,0 +1,9 @@
+{
+  "feature": "blog-feed-api",
+  "tasks": [
+    { "id": "T1", "status": "done" },
+    { "id": "T2", "status": "done" },
+    { "id": "T3", "status": "done" },
+    { "id": "T4", "status": "done" }
+  ]
+}

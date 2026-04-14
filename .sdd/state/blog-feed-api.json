@@ -1,0 +1,20 @@
+{
+  "feature": "blog-feed-api",
+  "mode": "manual",
+  "current_phase": "validation",
+  "status": "done",
+  "approved_phases": ["idea", "spec", "design", "tasks", "implementation", "validation"],
+  "workers": 1,
+  "validators": 1,
+  "registry_versions": {
+    "idea": 1,
+    "spec": 1,
+    "design": 1,
+    "tasks": 1,
+    "implementation": 1,
+    "validation": 1
+  },
+  "blocking_findings": [],
+  "created_at": "2026-04-14T00:00:00.000Z",
+  "updated_at": "2026-04-14T00:00:00.000Z"
+}

@@ -1,0 +1,4 @@
+{
+  "feature": "blog-feed-ui",
+  "assignments": [{ "worker": "W1", "tasks": ["U1", "U2", "U3", "U4"] }]
+}

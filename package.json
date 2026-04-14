@@ -1,0 +1,11 @@
+{
+  "name": "blog-feed",
+  "private": true,
+  "workspaces": ["server", "client"],
+  "scripts": {
+    "dev": "concurrently -n server,client \"npm run dev -w blog-feed-server\" \"npm run dev -w blog-feed-client\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

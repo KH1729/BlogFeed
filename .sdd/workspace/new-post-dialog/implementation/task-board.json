@@ -1,0 +1,9 @@
+{
+  "feature": "new-post-dialog",
+  "tasks": [
+    { "id": "N1", "status": "done" },
+    { "id": "N2", "status": "done" },
+    { "id": "N3", "status": "done" },
+    { "id": "N4", "status": "done" }
+  ]
+}
