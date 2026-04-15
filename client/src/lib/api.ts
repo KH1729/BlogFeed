@@ -16,7 +16,7 @@ const listResponseSchema = z.object({
   }),
 });
 
-const createResponseSchema = z.object({
+const singlePostSuccessSchema = z.object({
   success: z.literal(true),
   data: z.object({
     post: postSchema,
@@ -62,10 +62,38 @@ export async function createPost(input: {
     body: JSON.stringify(input),
   });
   const json: unknown = await res.json();
-  const parsed = createResponseSchema.safeParse(json);
+  const parsed = singlePostSuccessSchema.safeParse(json);
   if (!parsed.success || !res.ok) {
     const err = errorResponseSchema.safeParse(json);
     const message = err.success ? err.data.error.message : "Failed to create post";
+    throw new Error(message);
+  }
+  return parsed.data.data.post;
+}
+
+/**
+ * @description Updates a post via PATCH /api/posts/:id.
+ * @param id Post id from the server.
+ * @param input Title and body from the form.
+ * @returns Updated post.
+ */
+export async function updatePost(
+  id: string,
+  input: {
+    title: string;
+    body: string;
+  },
+): Promise<Post> {
+  const res = await fetch(`/api/posts/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  const json: unknown = await res.json();
+  const parsed = singlePostSuccessSchema.safeParse(json);
+  if (!parsed.success || !res.ok) {
+    const err = errorResponseSchema.safeParse(json);
+    const message = err.success ? err.data.error.message : "Failed to update post";
     throw new Error(message);
   }
   return parsed.data.data.post;

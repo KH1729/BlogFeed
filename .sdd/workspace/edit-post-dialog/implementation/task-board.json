@@ -1,0 +1,14 @@
+{
+  "feature": "edit-post-dialog",
+  "tasks": [
+    { "id": "E-001", "status": "done" },
+    { "id": "E-002", "status": "done" },
+    { "id": "E-003", "status": "done" },
+    { "id": "E-004", "status": "done" },
+    { "id": "E-005", "status": "done" },
+    { "id": "E-006", "status": "done" },
+    { "id": "E-007", "status": "done" },
+    { "id": "E-008", "status": "done" },
+    { "id": "E-009", "status": "done" }
+  ]
+}

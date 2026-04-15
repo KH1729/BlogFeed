@@ -46,11 +46,6 @@ export class PostRepository {
   }
 
   /**
-   * @description Appends a post and persists to disk.
-   * @param input Title and body from the client.
-   * @returns The created post.
-   */
-  /**
    * @description Replaces the posts file with an empty list (e.g. on server shutdown).
    */
   async clearAllPosts(): Promise<void> {
@@ -73,6 +68,39 @@ export class PostRepository {
     this.writeChain = this.writeChain.then(() => this.persistAppended(post));
     await this.writeChain;
     return post;
+  }
+
+  /**
+   * @description Updates title and body for an existing post; preserves id and createdAt.
+   * @param id Post identifier.
+   * @param input Trimmed title and body.
+   * @returns Updated post, or null if no post matches id.
+   */
+  async updatePost(id: string, input: CreatePostInput): Promise<Post | null> {
+    const resultPromise = this.writeChain.then(async (): Promise<Post | null> => {
+      const raw = await readFile(this.filePath, "utf8");
+      const parsed = JSON.parse(raw) as unknown;
+      const data = this.parseFile(parsed);
+      const idx = data.posts.findIndex((p) => p.id === id);
+      if (idx === -1) {
+        return null;
+      }
+      const existing = data.posts[idx];
+      if (!existing) {
+        return null;
+      }
+      const updated: Post = {
+        ...existing,
+        title: input.title,
+        body: input.body,
+      };
+      data.posts[idx] = updated;
+      await writeFile(this.filePath, `${JSON.stringify({ posts: data.posts }, null, 2)}\n`, "utf8");
+      this.logger.debug({ postId: id }, "post_updated");
+      return updated;
+    });
+    this.writeChain = resultPromise.then(() => undefined);
+    return resultPromise;
   }
 
   private parseFile(parsed: unknown): PostsFileShape {

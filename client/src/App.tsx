@@ -8,7 +8,8 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { createPost, fetchPosts } from "./lib/api.js";
+import { createPost, fetchPosts, updatePost } from "./lib/api.js";
+import { EditPostDialog } from "./components/EditPostDialog.js";
 import { NewPostDialog } from "./components/NewPostDialog.js";
 import { PostCard } from "./components/PostCard.js";
 import type { Post } from "./types/post.js";
@@ -18,17 +19,20 @@ const EMPTY_FEED_INTRO_MESSAGE =
   "There are no posts in your feed yet. Write the first post below to get started.";
 
 /**
- * @description Blog feed page: loads posts and opens a dialog to create posts.
+ * @description Blog feed page: loads posts and opens dialogs to create or edit posts.
  * @returns Main application layout.
  */
 export function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [editFormError, setEditFormError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEditSubmitting, setIsEditSubmitting] = useState(false);
   const [isNewPostOpen, setIsNewPostOpen] = useState(false);
   const [newPostIntroMessage, setNewPostIntroMessage] = useState<string | null>(null);
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
   const hasAutoOpenedForEmptyFeedRef = useRef(false);
 
   const loadPosts = useCallback(async () => {
@@ -63,6 +67,12 @@ export function App() {
     setNewPostIntroMessage(null);
   }, [isSubmitting]);
 
+  const handleCloseEditPost = useCallback(() => {
+    if (isEditSubmitting) return;
+    setEditingPost(null);
+    setEditFormError(null);
+  }, [isEditSubmitting]);
+
   return (
     <Box sx={{ minHeight: "100vh", py: 5, px: 2 }}>
       <Container maxWidth="sm">
@@ -91,6 +101,8 @@ export function App() {
               onClick={() => {
                 setFormError(null);
                 setNewPostIntroMessage(null);
+                setEditingPost(null);
+                setEditFormError(null);
                 setIsNewPostOpen(true);
               }}
             >
@@ -121,6 +133,30 @@ export function App() {
             }}
           />
 
+          {editingPost ? (
+            <EditPostDialog
+              open
+              post={editingPost}
+              onClose={handleCloseEditPost}
+              formError={editFormError}
+              isSubmitting={isEditSubmitting}
+              onSubmit={async (values) => {
+                setEditFormError(null);
+                setIsEditSubmitting(true);
+                try {
+                  await updatePost(editingPost.id, values);
+                  await loadPosts();
+                  setEditingPost(null);
+                } catch (e: unknown) {
+                  const message = e instanceof Error ? e.message : "Could not update post";
+                  setEditFormError(message);
+                } finally {
+                  setIsEditSubmitting(false);
+                }
+              }}
+            />
+          ) : null}
+
           <Box component="section" aria-label="Posts">
             <Typography
               variant="overline"
@@ -144,7 +180,16 @@ export function App() {
               <Stack component="ul" spacing={2} sx={{ listStyle: "none", m: 0, p: 0 }}>
                 {posts.map((post) => (
                   <Box component="li" key={post.id}>
-                    <PostCard post={post} />
+                    <PostCard
+                      post={post}
+                      onEdit={() => {
+                        setIsNewPostOpen(false);
+                        setNewPostIntroMessage(null);
+                        setFormError(null);
+                        setEditingPost(post);
+                        setEditFormError(null);
+                      }}
+                    />
                   </Box>
                 ))}
               </Stack>

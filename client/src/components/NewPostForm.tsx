@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -23,10 +24,22 @@ export interface NewPostFormProps {
   onCancel?: () => void;
   /** @description When true, shows an inline heading (omit when the shell provides a title). */
   showHeading?: boolean;
+  /** @description Pre-filled fields (edit); omit for create. */
+  defaultValues?: NewPostFormValues;
+  /** @description Primary submit label (default Publish). */
+  submitLabel?: string;
+  /** @description Submit label while submitting (default Publishing…). */
+  submittingLabel?: string;
+  /** @description When true, reset the form after a successful submit (default true). */
+  resetAfterSuccessfulSubmit?: boolean;
+  /** @description Prefix for field element ids (default new-post). */
+  fieldIdPrefix?: string;
 }
 
+const EMPTY_VALUES: NewPostFormValues = { title: "", body: "" };
+
 /**
- * @description Form fields for creating a post (title + body).
+ * @description Form fields for creating or editing a post (title + body).
  * @param props Submit handler, loading state, and optional cancel/heading.
  * @returns Form markup.
  */
@@ -35,6 +48,11 @@ export function NewPostForm({
   isSubmitting,
   onCancel,
   showHeading = false,
+  defaultValues,
+  submitLabel = "Publish",
+  submittingLabel = "Publishing…",
+  resetAfterSuccessfulSubmit = true,
+  fieldIdPrefix = "new-post",
 }: NewPostFormProps) {
   const {
     control,
@@ -43,8 +61,15 @@ export function NewPostForm({
     reset,
   } = useForm<NewPostFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { title: "", body: "" },
+    defaultValues: defaultValues ?? EMPTY_VALUES,
   });
+
+  useEffect(() => {
+    reset(defaultValues ?? EMPTY_VALUES);
+  }, [defaultValues?.title, defaultValues?.body, reset]);
+
+  const titleId = `${fieldIdPrefix}-title`;
+  const bodyId = `${fieldIdPrefix}-body`;
 
   return (
     <Box
@@ -52,7 +77,9 @@ export function NewPostForm({
       noValidate
       onSubmit={handleSubmit(async (values) => {
         await onSubmit(values);
-        reset();
+        if (resetAfterSuccessfulSubmit) {
+          reset();
+        }
       })}
     >
       {showHeading ? (
@@ -67,7 +94,7 @@ export function NewPostForm({
           render={({ field }) => (
             <TextField
               {...field}
-              id="new-post-title"
+              id={titleId}
               label="Title"
               autoComplete="off"
               fullWidth
@@ -82,7 +109,7 @@ export function NewPostForm({
           render={({ field }) => (
             <TextField
               {...field}
-              id="new-post-body"
+              id={bodyId}
               label="Body"
               multiline
               minRows={5}
@@ -100,7 +127,7 @@ export function NewPostForm({
           </Button>
         ) : null}
         <Button type="submit" variant="contained" disabled={isSubmitting}>
-          {isSubmitting ? "Publishing…" : "Publish"}
+          {isSubmitting ? submittingLabel : submitLabel}
         </Button>
       </Box>
     </Box>

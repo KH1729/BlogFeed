@@ -1,0 +1,11 @@
+{
+  "feature": "edit-post-dialog",
+  "workers": 1,
+  "assignments": [
+    {
+      "workerId": "W1",
+      "taskIds": ["E-001", "E-002", "E-003", "E-004", "E-005", "E-006", "E-007", "E-008", "E-009"],
+      "notes": "Sequential implementation; backend before App submit wiring."
+    }
+  ]
+}

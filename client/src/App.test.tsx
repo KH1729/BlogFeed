@@ -8,6 +8,7 @@ import { renderWithTheme } from "./test/renderWithTheme.js";
 vi.mock("./lib/api.js", () => ({
   fetchPosts: vi.fn(),
   createPost: vi.fn(),
+  updatePost: vi.fn(),
 }));
 
 describe("App", () => {

@@ -45,3 +45,11 @@ When the server process stops (**SIGINT** / **SIGTERM**), it writes an **empty**
 **Response (201):** `{ success: true, data: { post: Post } }`
 
 **Errors:** `{ success: false, error: { code: string, message: string } }` — e.g. `400` validation, `500` internal.
+
+### `PATCH /api/posts/:id`
+
+**Request body:** `{ title: string, body: string }` — same validation as `POST /api/posts` (trimmed; title max 500 chars, body max 50,000).
+
+**Response (200):** `{ success: true, data: { post: Post } }` — `id` and `createdAt` are unchanged; `title` and `body` reflect the update.
+
+**Errors:** `{ success: false, error: { code, message } }` — `400` validation (`VALIDATION_ERROR`), `404` when no post matches `id` (`NOT_FOUND`), `500` internal.
